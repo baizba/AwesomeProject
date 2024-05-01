@@ -19,7 +19,7 @@ const Cafe = ({ navigation }) => {
       <Text>Welcome!</Text>
       <Cat name = "Mu"/>
       <Cat name = "Bu"/>
-      <Button title="Go to Details" onPress={() => navigation.navigate('Map')}/>
+      <Button title="Go to Maps" onPress={() => navigation.navigate('Map')}/>
     </View>
   );
 };
