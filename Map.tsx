@@ -1,27 +1,57 @@
-import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { LatLng, LeafletView } from 'react-native-leaflet-view';
-
-const DEFAULT_COORDINATE: LatLng = {
-  lat: 44.606388,
-  lng: 17.859719,
-};
+import Geolocation from '@react-native-community/geolocation';
 
 const Map = () => {
+  const [currentPosition, setCurrentPosition] = useState<LatLng | null>(null);
+
+  useEffect(() => {
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.error('Permission to access location was denied');
+          return;
+        }
+      }
+      getCurrentLocation();
+    };
+
+    const getCurrentLocation = () => {
+      Geolocation.watchPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          setCurrentPosition({ lat: latitude, lng: longitude });
+        },
+        error => console.error(error),
+        { enableHighAccuracy: true, distanceFilter: 0, interval: 1000, fastestInterval: 500 }
+      );
+    };
+
+    requestLocationPermission();
+  }, []);
+
   return (
-      <View style={styles.root}>
+    <View style={styles.root}>
+      {currentPosition ? (
         <LeafletView
           mapMarkers={[
             {
-              position: DEFAULT_COORDINATE,
+              position: currentPosition,
               icon: '📍',
               size: [32, 32],
             },
           ]}
-          mapCenterPosition={DEFAULT_COORDINATE}
+          mapCenterPosition={currentPosition}
         />
-      </View>
-    );
+      ) : (
+        <Text>Loading...</Text>
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
