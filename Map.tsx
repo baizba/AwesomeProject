@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Text, View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
-import { LatLng, LeafletView } from 'react-native-leaflet-view';
+import { AnimationType, LatLng, LeafletView } from 'react-native-leaflet-view';
 import Geolocation from '@react-native-community/geolocation';
 
 const Map = () => {
@@ -55,8 +55,9 @@ const Map = () => {
           mapMarkers={[
             {
               position: currentPosition,
-              icon: '📍',
+              icon: '🛩',
               size: [32, 32],
+              iconAnchor: [16, 16]
             }
           ]}
           mapCenterPosition={centerPosition}
